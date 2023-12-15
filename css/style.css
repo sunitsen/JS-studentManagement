@@ -3,32 +3,20 @@
     margin: 0;
     padding: 0;
   }
-  body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    margin: 0;
-}
-
-.calculator {
-    text-align: center;
-}
-
-input {
-    width: 200px;
-    font-size: 18px;
-    margin-bottom: 10px;
-}
-
-.buttons {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-}
-
-button {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-}
+  #templateNavTop{
+    padding-block: .5em;
+  }
+  #displayDate h1{
+    font-size: 1em;
+    font-weight: normal;
+    font-family: arial;
+    margin-bottom: 0 !important;
+    color: azure;
+  }
+  #displayTime h1{
+    font-size: 1em;
+    font-weight: normal;
+    font-family: arial;
+    margin-bottom: 0 !important;
+    color: azure;
+  }
