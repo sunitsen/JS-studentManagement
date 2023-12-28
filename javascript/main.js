@@ -4,6 +4,9 @@ const lastName = userIdentityForm.querySelector('#lastName');
 const state = userIdentityForm.querySelector('#state');
 let userIdCounter = 1;
 
+
+
+
 // Form submitted
 userIdentityForm.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -23,12 +26,16 @@ userIdentityForm.addEventListener("submit", (event) => {
   }
 });
 
+
 // Clear input fields
 const clearFormFields = () => {
   firstName.value = '';
   lastName.value = '';
   state.value = '';
 };
+
+
+
 
 // For validation
 const formValidation = (user) => {
@@ -49,6 +56,11 @@ const formValidation = (user) => {
 
   return isValid;
 };
+
+
+
+
+
 
 // Store data
 const storeUserData = (user) => {
@@ -73,10 +85,18 @@ const storeUserData = (user) => {
   }
 };
 
+
+
+
+
 // Window load
 document.addEventListener('DOMContentLoaded', () => {
   showStoredData();
 });
+
+
+
+
 
 // Show stored data
 const showStoredData = () => {
@@ -93,6 +113,10 @@ const showStoredData = () => {
     console.error('Error parsing JSON:', error);
   }
 };
+
+
+
+
 
 // Display user data
 const displayUserData = (users) => {
@@ -113,7 +137,63 @@ const displayUserData = (users) => {
         <button type="button" class="btn btn-danger btn-sm">Delete</button>
       </td>
     `;
-
+     
     list.appendChild(row);
+
+
   });
 };
+
+
+
+
+
+// Add an event listener to the search input for dynamic search
+const searchInput = document.getElementById("searchInput");
+searchInput.addEventListener("keyup", () => {
+  performSearch();
+});
+
+// Perform the search
+const performSearch = () => {
+  // Retrieve the search input value
+  const searchInputValue = searchInput.value.trim().toLowerCase();
+
+  try {
+    // Retrieve the user data from local storage
+    const existingUsers = JSON.parse(localStorage.getItem('users')) || [];
+
+    // Perform the search
+    const searchResults = existingUsers.filter(user => {
+      return (
+        user.firstName.toLowerCase().includes(searchInputValue) ||
+        user.lastName.toLowerCase().includes(searchInputValue) ||
+        user.state.toLowerCase().includes(searchInputValue)
+      );
+    });
+
+    // Display the search results or show a message if no data is found
+    const list = document.querySelector("#student-list");
+    list.innerHTML = ''; // Clear the existing content of the table
+
+    if (searchResults.length > 0) {
+      displayUserData(searchResults);
+    } else {
+      const noDataFoundRow = document.createElement("tr");
+      noDataFoundRow.innerHTML = `
+        <td colspan="6" class="text-center">No data available.</td>
+      `;
+      list.appendChild(noDataFoundRow);
+    }
+  } catch (error) {
+    console.error('Error parsing JSON:', error);
+  }
+};
+
+
+// Add an event listener to clear the search results when the search input is cleared
+searchInput.addEventListener("input", () => {
+  if (searchInput.value.trim() === '') {
+    resetSearchResults();
+  }
+});
