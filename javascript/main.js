@@ -1,46 +1,119 @@
-/* Date */
-var date = new Date();
-var currentDay = date.getDate();
-var currentMonth = date.getMonth() + 1; // Adding 1 to adjust for zero-based indexing
-var currentYear = date.getFullYear();
-var currentHours = date.getHours();
-var currentMinutes = date.getMinutes();
-var currentSeconds = date.getSeconds();
+const userIdentityForm = document.getElementById("userIdentity");
+const firstName = userIdentityForm.querySelector('#firstName');
+const lastName = userIdentityForm.querySelector('#lastName');
+const state = userIdentityForm.querySelector('#state');
+let userIdCounter = 1;
 
-// Create a span element for the full date
-const fullDate = document.createElement("span");
-fullDate.textContent = " Date:" + " " + currentDay + "/" + currentMonth + "/" + currentYear;
+// Form submitted
+userIdentityForm.addEventListener("submit", (event) => {
+  event.preventDefault();
 
-// Select the h1 element inside the element with id "displayDate"
-const displayDateElement = document.querySelector("#displayDate h1");
+  const user = {
+    id: userIdCounter++,
+    firstName: firstName.value.trim(),
+    lastName: lastName.value.trim(),
+    state: state.value.trim(),
+  };
 
-// Append the fullDate span to the displayDate element
-displayDateElement.appendChild(fullDate);
+  if (formValidation(user)) {
+    storeUserData(user);
+    clearFormFields();
+  } else {
+    console.log("Form is not valid, and it will not be submitted");
+  }
+});
 
-// Function to format time
-function formatTime(hours, minutes, seconds) {
-  return `${'Time: '}${hours}:${minutes}:${seconds}`;
-}
+// Clear input fields
+const clearFormFields = () => {
+  firstName.value = '';
+  lastName.value = '';
+  state.value = '';
+};
 
-// Function to update time in the display
-function updateTime() {
-  var currentTime = new Date();
-  var currentHours = currentTime.getHours();
-  var currentMinutes = currentTime.getMinutes();
-  var currentSeconds = currentTime.getSeconds();
+// For validation
+const formValidation = (user) => {
+  let isValid = true;
+  const fields = ["firstName", "lastName", "state"];
 
-  // Create a span element for the time
-  const displayTimeElement = document.querySelector("#displayTime h1");
-  const fullTime = document.createElement("span");
-  fullTime.textContent = formatTime(currentHours, currentMinutes, currentSeconds);
+  fields.forEach(field => {
+    const fieldValue = user[field];
+    const errorElement = document.getElementById(`${field}Error`);
 
-  // Replace the content of the displayTime element
-  displayTimeElement.innerHTML = '';
-  displayTimeElement.appendChild(fullTime);
-}
+    if (!fieldValue) {
+      isValid = false;
+      errorElement.textContent = `${field} is empty`;
+    } else {
+      errorElement.textContent = '';
+    }
+  });
 
-// Initial update
-updateTime();
+  return isValid;
+};
 
-// Set interval to update time every second
-setInterval(updateTime, 1000);
+// Store data
+const storeUserData = (user) => {
+  try {
+    // Retrieve existing users from local storage or initialize an empty array
+    const existingUsers = JSON.parse(localStorage.getItem('users')) || [];
+
+    // Add the new user to the array
+    existingUsers.push(user);
+
+    // Update local storage with the modified user array
+    localStorage.setItem('users', JSON.stringify(existingUsers));
+
+    console.log('User data stored:', user);
+    console.log('Updated user list in local storage:', existingUsers);
+
+    // Display the updated data in the table
+    displayUserData(existingUsers);
+
+  } catch (error) {
+    console.error('Error parsing JSON:', error);
+  }
+};
+
+// Window load
+document.addEventListener('DOMContentLoaded', () => {
+  showStoredData();
+});
+
+// Show stored data
+const showStoredData = () => {
+  try {
+    // Retrieve the user data from local storage
+    const existingUsers = JSON.parse(localStorage.getItem('users')) || [];
+  
+    console.log('User data stored:', existingUsers);
+  
+    // Display user data in the table
+    displayUserData(existingUsers);
+
+  } catch (error) {
+    console.error('Error parsing JSON:', error);
+  }
+};
+
+// Display user data
+const displayUserData = (users) => {
+  const list = document.querySelector("#student-list");
+  list.innerHTML = ''; // Clear the existing content of the table
+
+  users.forEach((user, index) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <th scope="row">${index + 1}</th>
+      <td>${user.firstName}</td>
+      <td>${user.lastName}</td>
+      <td>${user.state}</td>
+      <td>
+        <button type="button" class="btn btn-warning btn-sm">Edit</button>
+      </td>
+      <td>
+        <button type="button" class="btn btn-danger btn-sm">Delete</button>
+      </td>
+    `;
+
+    list.appendChild(row);
+  });
+};

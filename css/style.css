@@ -20,3 +20,11 @@
     margin-bottom: 0 !important;
     color: azure;
   }
+  .pagination li a{
+    background: #212529;
+    color: white;
+  }
+  .pagination li a:hover{
+   background: #198754;
+    color: white;
+  }
